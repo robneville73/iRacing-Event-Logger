@@ -36,17 +36,18 @@ TICK_SLEEP_S = 0.016
 CLOSE_BATTLE_THROTTLE_S = 2.0
 
 
-def run(config: Dict[str, Any], writer: Optional[LogWriter] = None) -> None:
+def run(config: Dict[str, Any], writer: Optional[LogWriter] = None) -> bool:
     """
     Connect to iRacing, resolve focus car, then run the telemetry loop until disconnect.
     Events are written to the provided LogWriter; if None, a default is created from config.
+    Returns True if the main loop ran, False if exited early (connection or focus failure).
     """
     from .config import get_log_file
 
     sdk = IRacingSDK()
     if not sdk.startup():
         logger.error("Could not connect to iRacing. Is the sim running?")
-        return
+        return False
 
     focus_driver = get_focus_driver(config)
     focus_car = get_focus_car(config)
@@ -55,7 +56,7 @@ def run(config: Dict[str, Any], writer: Optional[LogWriter] = None) -> None:
     if not focus:
         logger.warning("No focus driver/car specified or not found in session. Logging all cars disabled.")
         sdk.shutdown()
-        return
+        return False
 
     if get_start_telemetry(config):
         sdk.telem_start()
@@ -111,6 +112,7 @@ def run(config: Dict[str, Any], writer: Optional[LogWriter] = None) -> None:
     finally:
         writer.flush()
         sdk.shutdown()
+    return True
 
 
 def _tick(

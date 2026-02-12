@@ -162,13 +162,3 @@ begin
     SaveStringToFile(ConfigPath, ConfigContent, False);
   end;
 end;
-
-function InitializeSetup(): Boolean;
-begin
-  Result := True;
-  if not FileExists(ExpandConstant('dist\{#MyAppExeName}')) then
-  begin
-    MsgBox('Build output not found. Run "pyinstaller event_logger.spec" first to create dist\iRacingEventLogger.exe', mbError, MB_OK);
-    Result := False;
-  end;
-end;

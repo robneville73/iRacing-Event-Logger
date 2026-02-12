@@ -139,6 +139,8 @@ To create a Windows exe and installer (no Python required for end users):
 
 The installer prompts for focus (car number or driver name), log file path, battle gap, and whether to start telemetry. It writes `config.yaml` to `%USERPROFILE%\.config\iracing-event-logger\`.
 
+**Troubleshooting:** When the installed exe runs, it writes an `app.log` file to the same folder as the exe (e.g. `%LOCALAPPDATA%\iRacing Event Logger\app.log`). On error, the console window stays open until you press Enter so you can read the message.
+
 ## Development
 
 - Follow PEP 8 and the project [coding_standards.md](coding_standards.md).
