@@ -102,6 +102,43 @@ See the source (`events.py`, `detectors.py`, `log_writer.py`) and docstrings for
 | `close_battle` | Small gap ahead or behind (for camera/battle highlight). |
 | `driver_change` | Endurance: driver in/out (when DriverInfo changes). |
 
+## Building the installer
+
+To create a Windows exe and installer (no Python required for end users):
+
+**Prerequisites**
+
+- Python 3.7+
+- [Inno Setup 6](https://jrsoftware.org/isinfo.php)
+
+**Steps**
+
+1. Create and activate a virtual environment, then install build dependencies:
+
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements-build.txt
+   ```
+
+2. Build the exe with PyInstaller:
+
+   ```bash
+   pyinstaller event_logger.spec
+   ```
+
+   This produces `dist\iRacingEventLogger.exe`.
+
+3. Build the installer with Inno Setup:
+
+   ```bash
+   iscc installer.iss
+   ```
+
+   This produces `Output\iRacingEventLogger-Setup.exe`.
+
+The installer prompts for focus (car number or driver name), log file path, battle gap, and whether to start telemetry. It writes `config.yaml` to `%USERPROFILE%\.config\iracing-event-logger\`.
+
 ## Development
 
 - Follow PEP 8 and the project [coding_standards.md](coding_standards.md).

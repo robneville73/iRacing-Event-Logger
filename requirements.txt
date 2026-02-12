@@ -3,3 +3,6 @@ PyYAML>=5.3,<7
 
 # Testing
 pytest>=6.0
+
+# Build (for creating Windows exe)
+pyinstaller>=6.0

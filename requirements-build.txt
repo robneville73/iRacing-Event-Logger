@@ -1,0 +1,5 @@
+# Build dependencies for creating Windows exe
+# Install: pip install -r requirements-build.txt
+
+-r requirements.txt
+pyinstaller>=6.0
