@@ -1,0 +1,27 @@
+# Example config for iRacing Event Logger.
+# Copy to config.yaml or place in ~/.config/iracing-event-logger/
+
+# Focus on one car/driver (required for logging).
+focus_car: "5"
+# focus_driver: "Your Name"
+
+# Output
+log_file: "event_log.json"
+
+# Close battle: time gap (seconds) below which to emit close_battle when spectating.
+battle_gap_s: 1.5
+
+# Start iRacing telemetry recording when the logger connects.
+start_telemetry: false
+
+# Optional: only emit these event types (omit to enable all).
+# event_types:
+#   - lap_complete
+#   - pass
+#   - got_passed
+#   - pit_entry
+#   - pit_exit
+#   - pit_stop_complete
+#   - incident
+#   - close_battle
+#   - driver_change
