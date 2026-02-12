@@ -6,7 +6,7 @@ from iracing_event_logger.detectors import (
     check_lap_complete,
     check_pit,
     check_position_changes,
-    _current_lap,
+    current_lap,
 )
 from iracing_event_logger.events import LAP_COMPLETE, PIT_ENTRY, PIT_EXIT, PASS, GOT_PASSED
 
@@ -133,7 +133,7 @@ def test_position_got_passed():
 
 
 def test_current_lap():
-    """_current_lap from CarIdxLapCompleted."""
+    """current_lap from CarIdxLapCompleted."""
     ir = MockIR({"CarIdxLapCompleted": [0, 0, 2, 0]})
-    assert _current_lap(ir, 2) == 3
-    assert _current_lap(ir, 0) == 1
+    assert current_lap(ir, 2) == 3
+    assert current_lap(ir, 0) == 1

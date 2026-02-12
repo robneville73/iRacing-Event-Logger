@@ -19,6 +19,7 @@ This program should be written in Python and follow PEP-8 coding standards. It s
 
 ## Testing
 
+- Practice TDD; test first, verify failing test, write the desired feature to make the test pass; iterate.
 - Prefer pytest; unit tests for event detection logic with mocked or canned SDK data (e.g. from a dumped session YAML + telemetry snapshot).
 
 ## Type hints

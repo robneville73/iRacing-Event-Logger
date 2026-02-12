@@ -19,6 +19,7 @@ from .detectors import (
     check_pit,
     check_pit_stop_complete,
     check_position_changes,
+    current_lap,
 )
 from .log_writer import LogWriter
 from .sdk_wrapper import (
@@ -133,7 +134,7 @@ def _tick(
         session_time = 0.0
 
     driver_info = sdk["DriverInfo"]
-    current_lap = _current_lap(ir, focus_idx)
+    current_lap_val = current_lap(ir, focus_idx)
 
     # Lap complete
     ev_lap, state["prev_lap_completed"] = check_lap_complete(
@@ -145,17 +146,17 @@ def _tick(
 
     # Position changes (pass / got_passed)
     pos_events, state["prev_position"] = check_position_changes(
-        ir, focus_idx, state["prev_position"], driver_info, current_lap, event_types
+        ir, focus_idx, state["prev_position"], driver_info, current_lap_val, event_types
     )
     for e in pos_events:
-        writer.add_event(current_lap, e)
+        writer.add_event(current_lap_val, e)
 
     # Pit entry/exit
     pit_events, state["prev_on_pit_road"] = check_pit(
-        ir, focus_idx, state["prev_on_pit_road"], current_lap, event_types
+        ir, focus_idx, state["prev_on_pit_road"], current_lap_val, event_types
     )
     for e in pit_events:
-        writer.add_event(current_lap, e)
+        writer.add_event(current_lap_val, e)
         if e.get("type") == "pit_entry":
             state["pit_entry_session_time"] = e.get("session_time")
         if e.get("type") == "pit_exit":
@@ -164,44 +165,31 @@ def _tick(
     # Pit stop complete (focus = player only)
     pit_complete_ev, state["prev_pit_sv_status"] = check_pit_stop_complete(
         ir, focus_idx, player_car_idx, state["prev_pit_sv_status"],
-        state.get("pit_entry_session_time"), current_lap, event_types
+        state.get("pit_entry_session_time"), current_lap_val, event_types
     )
     if pit_complete_ev:
-        writer.add_event(current_lap, pit_complete_ev)
+        writer.add_event(current_lap_val, pit_complete_ev)
 
     # Incident (focus = player only)
     inc_ev, state["prev_incident_count"] = check_incident(
-        ir, focus_idx, player_car_idx, state["prev_incident_count"], current_lap, event_types
+        ir, focus_idx, player_car_idx, state["prev_incident_count"], current_lap_val, event_types
     )
     if inc_ev:
-        writer.add_event(current_lap, inc_ev)
+        writer.add_event(current_lap_val, inc_ev)
 
     # Close battle (throttled)
     if state["last_close_battle_time"] is None or (session_time - state["last_close_battle_time"]) >= CLOSE_BATTLE_THROTTLE_S:
         battle_ev = check_close_battle(
-            ir, focus_idx, player_car_idx, driver_info, current_lap, battle_gap_s, 80.0, event_types
+            ir, focus_idx, player_car_idx, driver_info, current_lap_val, battle_gap_s, 80.0, event_types
         )
         if battle_ev:
-            writer.add_event(current_lap, battle_ev)
+            writer.add_event(current_lap_val, battle_ev)
             state["last_close_battle_time"] = session_time
 
     # Driver change (compare to previous DriverInfo)
     dc_ev = check_driver_change(
-        driver_info, state["prev_driver_info"], focus_idx, session_time, current_lap, event_types
+        driver_info, state["prev_driver_info"], focus_idx, session_time, current_lap_val, event_types
     )
     if dc_ev:
-        writer.add_event(current_lap, dc_ev)
+        writer.add_event(current_lap_val, dc_ev)
     state["prev_driver_info"] = driver_info
-
-
-def _current_lap(ir: Any, focus_idx: int) -> int:
-    completed = None
-    try:
-        arr = ir["CarIdxLapCompleted"]
-        if isinstance(arr, (list, tuple)) and 0 <= focus_idx < len(arr):
-            completed = arr[focus_idx]
-    except (TypeError, IndexError, KeyError):
-        pass
-    if completed is None or completed < 0:
-        return 1
-    return int(completed) + 1

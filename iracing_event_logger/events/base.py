@@ -1,19 +1,33 @@
-"""Event type names and payload typing for the JSON log."""
+"""Shared event builder and event type registry."""
 
 from typing import Any, Dict
 
-# Event type string constants (must match plan section 5.2)
-LAP_COMPLETE = "lap_complete"
-PASS = "pass"
-GOT_PASSED = "got_passed"
-PIT_ENTRY = "pit_entry"
-PIT_EXIT = "pit_exit"
-PIT_STOP_COMPLETE = "pit_stop_complete"
-INCIDENT = "incident"
-CLOSE_BATTLE = "close_battle"
-DRIVER_CHANGE = "driver_change"
-GAP_CLOSED = "gap_closed"
-GAP_OPENED = "gap_opened"
+from . import (
+    close_battle,
+    driver_change,
+    gap_closed,
+    gap_opened,
+    got_passed,
+    incident,
+    lap_complete,
+    pass_event,
+    pit_entry,
+    pit_exit,
+    pit_stop_complete,
+)
+
+# Re-export all type constants for convenience
+LAP_COMPLETE = lap_complete.LAP_COMPLETE
+PASS = pass_event.PASS
+GOT_PASSED = got_passed.GOT_PASSED
+PIT_ENTRY = pit_entry.PIT_ENTRY
+PIT_EXIT = pit_exit.PIT_EXIT
+PIT_STOP_COMPLETE = pit_stop_complete.PIT_STOP_COMPLETE
+INCIDENT = incident.INCIDENT
+CLOSE_BATTLE = close_battle.CLOSE_BATTLE
+DRIVER_CHANGE = driver_change.DRIVER_CHANGE
+GAP_CLOSED = gap_closed.GAP_CLOSED
+GAP_OPENED = gap_opened.GAP_OPENED
 
 ALL_TYPES = [
     LAP_COMPLETE,
